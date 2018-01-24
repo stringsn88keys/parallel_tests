@@ -170,7 +170,7 @@ namespace :parallel do
       command = "#{ParallelTests.with_ruby_binary(Shellwords.escape(executable))} #{type} --type #{test_framework} " \
         "-n #{count} "                     \
         "--pattern '#{pattern}' "          \
-        options
+        " #{options} "
         "--test-options '#{test_options}'"
       abort unless system(command) # allow to chain tasks e.g. rake parallel:spec parallel:features
     end
