@@ -70,9 +70,10 @@ module ParallelTests
         count = args.shift if args.first.to_s =~ /^\d*$/
         num_processes = count.to_i unless count.to_s.empty?
         pattern = args.shift
-        options = args.shift
+        options, test_options = args.shift.to_s.split(' -- ')
 
-        [num_processes, pattern.to_s, options.to_s]
+
+        [num_processes, pattern.to_s, options, test_options]
       end
     end
   end
@@ -152,7 +153,7 @@ namespace :parallel do
       $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..'))
       require "parallel_tests"
 
-      count, pattern, options = ParallelTests::Tasks.parse_args(args)
+      count, pattern, options, test_options = ParallelTests::Tasks.parse_args(args)
       test_framework = {
         'spec' => 'rspec',
         'test' => 'test',
@@ -169,7 +170,8 @@ namespace :parallel do
       command = "#{ParallelTests.with_ruby_binary(Shellwords.escape(executable))} #{type} --type #{test_framework} " \
         "-n #{count} "                     \
         "--pattern '#{pattern}' "          \
-        "--test-options '#{options}'"
+        options
+        "--test-options '#{test_options}'"
       abort unless system(command) # allow to chain tasks e.g. rake parallel:spec parallel:features
     end
   end
